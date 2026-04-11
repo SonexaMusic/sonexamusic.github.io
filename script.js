@@ -40,9 +40,20 @@ window.addEventListener('resize', () => {
   RT.dispose(); RT = new THREE.WebGLRenderTarget(rW(), rH(), { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, depthBuffer: false, stencilBuffer: false }); pU.u_texture.value = RT.texture
   initSizes()
 })
+const logo = document.getElementById('travelling-logo')
+const footerAnchor = document.getElementById('footer-logo-anchor')
+let logoScrollRawP = 0
+let logoInFooterPhase = false
+logo.style.animation = 'none'
+
 let elapsed = 0, prevT = performance.now()
 function animate(now) {
   const dt = Math.min((now - prevT) * .001, .033); prevT = now; elapsed += dt
+  const _floatAmt = Math.max(0, 1 - Math.min(logoScrollRawP / 0.05, 1));
+  const _fy = Math.sin(elapsed * (2 * Math.PI / 5.5)) * 16 * _floatAmt;
+  if (!isLegalPage && !logoInFooterPhase) {
+    logo.style.transform = `translate(-50%, -50%) translateY(${_fy}px)`;
+  }
   tClock += dt; const tm = tClock > 9 ? Math.min((tClock - 9) / 3.2, 1) : 0
   sU.u_themeMix.value = tm
   if (tm >= 1) { tF = tTo; tTo = (tTo + 1) % TP.length; setTS('A', TP[tF]); setTS('B', TP[tTo]); tClock = 0; sU.u_themeMix.value = 0 }
@@ -65,8 +76,6 @@ if (typeof Lenis !== 'undefined') {
   gsap.ticker.lagSmoothing(0)
 }
 
-const logo = document.getElementById('travelling-logo')
-const footerLogoEl = document.querySelector('.footer-logo-img')
 const NAV_H = 72
 
 let bigW, smallW, bigTop, smallTop
@@ -122,43 +131,42 @@ function updateLogo() {
   const vh = window.innerHeight;
   const rawP = Math.min(sy / TRAV(), 1);
   const p = eio(rawP);
-  const phase1W   = bigW + (smallW - bigW) * p;
-  const phase1Top = bigTop + (smallTop - bigTop) * p;
 
-  const fRect = footerLogoEl.getBoundingClientRect();
+  logoScrollRawP = rawP;
+
+  const fRect = footerAnchor.getBoundingClientRect();
   const maxScroll   = document.body.scrollHeight - vh;
   const distFromBot = Math.max(0, maxScroll - sy);
   const footerRawP  = Math.max(0, Math.min(1, 1 - distFromBot / (vh * 0.55)));
   const fp = eio(footerRawP);
 
   if (footerRawP > 0) {
+    logoInFooterPhase = true;
+
     const targetCX = fRect.left + fRect.width  / 2;
     const targetCY = fRect.top  + fRect.height / 2;
-    const targetW  = fRect.width;
+    const targetW  = fRect.width || smallW;
     const isMobile = window.innerWidth <= 600;
-    const boostStrength = isMobile ? 0.12 : 0.25;
+    const boostStrength = isMobile ? 0.05 : 0.08;
     const boost = 1 + boostStrength * Math.pow(fp, 2);
     const wBase = smallW + (targetW - smallW) * fp;
-    // const w = wBase * boost;
+
     const cx = window.innerWidth / 2 + (targetCX - window.innerWidth / 2) * fp;
     const cy = smallTop + (targetCY - smallTop) * fp;
     const sizeDiff = targetW - wBase;
     const cyOffset = isMobile ? -(sizeDiff * 0.15) : 0;
-    // const boost = 1 + 0.01 * fp;
-    // const w  = (smallW + (targetW  - smallW) * fp) * boost;
 
-    logo.style.width = wBase + 'px';
-    logo.style.left = cx + 'px';
-    logo.style.top = (cy + cyOffset) + 'px';
+    logo.style.width     = wBase + 'px';
+    logo.style.left      = cx + 'px';
+    logo.style.top       = (cy + cyOffset) + 'px';
     logo.style.transform = `translate(-50%, -50%) scale(${boost})`;
-    logo.style.animationPlayState = 'paused';
 
   } else {
-    logo.style.width     = phase1W   + 'px';
-    logo.style.top       = phase1Top + 'px';
-    logo.style.left      = '50%';
-    logo.style.transform = '';
-    logo.style.animationPlayState = rawP > 0.03 ? 'paused' : 'running';
+    logoInFooterPhase = false;
+
+    logo.style.width = (bigW + (smallW - bigW) * p) + 'px';
+    logo.style.top   = (bigTop + (smallTop - bigTop) * p) + 'px';
+    logo.style.left  = '50%';
   }
 }
 
@@ -214,8 +222,7 @@ function showLegal(type) {
 
   logo.style.width = smallW + "px";
   logo.style.top = smallTop + "px";
-  logo.style.animation = "none";
-  logo.style.transform = "translate(-50%, 0)";
+  logo.style.transform = 'translate(-50%, -50%)';
 
   if (lenis) {
     lenis.scrollTo(0, { immediate: true });

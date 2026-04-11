@@ -47,11 +47,10 @@ canvas#webgl {
     position: fixed;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, -50%);
     z-index: 200;
     pointer-events: none;
-    will-change: width, top;
-    animation: floatLogo 5.5s ease-in-out infinite;
+    will-change: width, top, transform;
     filter: drop-shadow(0 5px 12px rgba(48, 56, 70, 0.28)) drop-shadow(0 0 14px rgba(240, 246, 255, 0.18));
 }
 
@@ -753,7 +752,7 @@ footer {
     font-size: 13px;
     font-weight: 300;
     color: rgba(255, 255, 255, 0.3);
-    margin-top: 14px;
+    margin-top: 48px;
     max-width: 240px;
     line-height: 1.7;
 }
