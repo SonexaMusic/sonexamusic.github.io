@@ -142,6 +142,22 @@ gsap.to('#ph', { opacity: 1, y: 0, duration: 1, ease: 'expo.out', scrollTrigger:
 gsap.to('#ps', { opacity: 1, y: 0, duration: .9, ease: 'power3.out', delay: .2, scrollTrigger: { trigger: '#sec-platform', start: 'top 65%', once: true } })
 gsap.to('#pl', { opacity: 1, duration: .8, ease: 'power2.out', delay: .4, scrollTrigger: { trigger: '#sec-platform', start: 'top 60%', once: true } })
 
+const cache = {};
+
+function loadMarkdown(file) {
+  if (cache[file]) return Promise.resolve(cache[file]);
+
+  return fetch(file)
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to load");
+      return res.text();
+    })
+    .then(md => {
+      cache[file] = md;
+      return md;
+    });
+}
+
 function showLegal(type) {
   let file = "";
   let title = "";
@@ -170,10 +186,12 @@ function showLegal(type) {
 
   document.getElementById("legal-title").textContent = title;
 
-  fetch(file)
-    .then(res => res.text())
+  loadMarkdown(file)
     .then(md => {
       document.getElementById("legal-content").innerHTML = marked.parse(md);
+    })
+    .catch(() => {
+      document.getElementById("legal-content").innerHTML = "<p>Failed to load content.</p>";
     });
 
   logo.style.width = smallW + "px";
