@@ -66,14 +66,19 @@ if (typeof Lenis !== 'undefined') {
 }
 
 const logo = document.getElementById('travelling-logo')
+const footerLogoEl = document.querySelector('.footer-logo-img')
 const NAV_H = 72
 
 let bigW, smallW, bigTop, smallTop
 function initSizes() {
-  bigW = Math.min(window.innerWidth * 0.58, 430)
+  if (window.innerWidth <= 600) {
+    logo.style.width = ''
+    bigW = logo.getBoundingClientRect().width || window.innerWidth * 0.70
+  } else {
+    bigW = Math.min(window.innerWidth * 0.58, 430)
+  }
   smallW = 110
   bigTop = window.innerHeight * 0.5
-  // smallTop = NAV_H * 0.7
   smallTop = 70
 }
 initSizes()
@@ -114,16 +119,47 @@ function updateLogo() {
   if (isLegalPage) return;
 
   const sy = window.scrollY;
+  const vh = window.innerHeight;
   const rawP = Math.min(sy / TRAV(), 1);
   const p = eio(rawP);
+  const phase1W   = bigW + (smallW - bigW) * p;
+  const phase1Top = bigTop + (smallTop - bigTop) * p;
 
-  const w = bigW + (smallW - bigW) * p;
-  logo.style.width = w + 'px';
+  const fRect = footerLogoEl.getBoundingClientRect();
+  const maxScroll   = document.body.scrollHeight - vh;
+  const distFromBot = Math.max(0, maxScroll - sy);
+  const footerRawP  = Math.max(0, Math.min(1, 1 - distFromBot / (vh * 0.55)));
+  const fp = eio(footerRawP);
 
-  const cy = bigTop + (smallTop - bigTop) * p;
-  logo.style.top = cy + 'px';
+  if (footerRawP > 0) {
+    const targetCX = fRect.left + fRect.width  / 2;
+    const targetCY = fRect.top  + fRect.height / 2;
+    const targetW  = fRect.width;
+    const isMobile = window.innerWidth <= 600;
+    const boostStrength = isMobile ? 0.12 : 0.25;
+    const boost = 1 + boostStrength * Math.pow(fp, 2);
+    const wBase = smallW + (targetW - smallW) * fp;
+    // const w = wBase * boost;
+    const cx = window.innerWidth / 2 + (targetCX - window.innerWidth / 2) * fp;
+    const cy = smallTop + (targetCY - smallTop) * fp;
+    const sizeDiff = targetW - wBase;
+    const cyOffset = isMobile ? -(sizeDiff * 0.15) : 0;
+    // const boost = 1 + 0.01 * fp;
+    // const w  = (smallW + (targetW  - smallW) * fp) * boost;
 
-  logo.style.animationPlayState = rawP > 0.03 ? 'paused' : 'running';
+    logo.style.width = wBase + 'px';
+    logo.style.left = cx + 'px';
+    logo.style.top = (cy + cyOffset) + 'px';
+    logo.style.transform = `translate(-50%, -50%) scale(${boost})`;
+    logo.style.animationPlayState = 'paused';
+
+  } else {
+    logo.style.width     = phase1W   + 'px';
+    logo.style.top       = phase1Top + 'px';
+    logo.style.left      = '50%';
+    logo.style.transform = '';
+    logo.style.animationPlayState = rawP > 0.03 ? 'paused' : 'running';
+  }
 }
 
 window.addEventListener('scroll', updateLogo, { passive: true })
@@ -141,22 +177,6 @@ gsap.to('#qs', { opacity: 1, duration: .9, ease: 'power2.out', delay: .45, scrol
 gsap.to('#ph', { opacity: 1, y: 0, duration: 1, ease: 'expo.out', scrollTrigger: { trigger: '#sec-platform', start: 'top 70%', once: true } })
 gsap.to('#ps', { opacity: 1, y: 0, duration: .9, ease: 'power3.out', delay: .2, scrollTrigger: { trigger: '#sec-platform', start: 'top 65%', once: true } })
 gsap.to('#pl', { opacity: 1, duration: .8, ease: 'power2.out', delay: .4, scrollTrigger: { trigger: '#sec-platform', start: 'top 60%', once: true } })
-
-const cache = {};
-
-function loadMarkdown(file) {
-  if (cache[file]) return Promise.resolve(cache[file]);
-
-  return fetch(file)
-    .then(res => {
-      if (!res.ok) throw new Error("Failed to load");
-      return res.text();
-    })
-    .then(md => {
-      cache[file] = md;
-      return md;
-    });
-}
 
 function showLegal(type) {
   let file = "";
@@ -186,12 +206,10 @@ function showLegal(type) {
 
   document.getElementById("legal-title").textContent = title;
 
-  loadMarkdown(file)
+  fetch(file)
+    .then(res => res.text())
     .then(md => {
       document.getElementById("legal-content").innerHTML = marked.parse(md);
-    })
-    .catch(() => {
-      document.getElementById("legal-content").innerHTML = "<p>Failed to load content.</p>";
     });
 
   logo.style.width = smallW + "px";

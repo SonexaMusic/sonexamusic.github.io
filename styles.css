@@ -656,9 +656,9 @@ canvas#webgl {
     transform: translateY(2px);
     cursor: pointer;
     list-style: none;
-
-
-
+    /* padding: 0; */
+    /* padding-left: 0; */
+    /* margin: 0; */
     position: relative;
 }
 
@@ -666,7 +666,19 @@ canvas#webgl {
     color: #2a313b;
 }
 
+/* .platform-list li::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    transition: background 0.3s;
+}
 
+.platform-list li:hover::before {
+    background: currentColor;
+} */
 
 .platform-list li:not(:first-child)::before {
     content: '';
@@ -700,7 +712,11 @@ canvas#webgl {
     transform: translate(-50%, -20px);
 }
 
-
+/* .platform-list svg {
+    display: block;
+    width: 64px;
+    height: 64px;
+} */
 
 .globe_svg {
     margin-top: 20px;
@@ -843,9 +859,6 @@ footer {
     cursor: pointer;
 }
 
-
-
-
 @media (max-width: 900px) {
     .manifesto {
         padding: 100px 8vw;
@@ -913,14 +926,11 @@ footer {
     }
 }
 
-
 @media (max-width: 600px) {
 
-
     #travelling-logo {
-        width: clamp(220px, 70vw, 320px) !important;
+        width: clamp(220px, 70vw, 320px);
     }
-
 
     .massive-text {
         font-size: clamp(48px, 16vw, 80px);
@@ -930,7 +940,6 @@ footer {
     .hero-scroll-hint {
         bottom: 28px;
     }
-
 
     .manifesto {
         padding: 80px 6vw;
@@ -955,7 +964,6 @@ footer {
     .manifesto-body {
         font-size: 15px;
     }
-
 
     .features-section {
         padding: 80px 6vw;
@@ -984,7 +992,6 @@ footer {
         display: none;
     }
 
-
     .sound-section {
         padding: 80px 6vw;
         min-height: auto;
@@ -1010,7 +1017,6 @@ footer {
         margin-bottom: 36px;
     }
 
-
     .strip-section {
         flex-direction: column;
     }
@@ -1026,7 +1032,6 @@ footer {
     .strip-item:first-child {
         border-top: none;
     }
-
 
     .quote-section {
         padding: 80px 6vw;
