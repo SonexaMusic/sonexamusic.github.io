@@ -5,7 +5,7 @@
       "name": "Tidal",
       "version": "1.0.0",
       "description": "Stream lossless audio from Tidal",
-      "iconUrl": " https://files.catbox.moe/qb5sw5.png",
+      "iconUrl": "https://files.catbox.moe/qb5sw5.png",
       "dexUrl": "https://sonexamusic.github.io/modules/dex/tidal-1.0.0.dex"
     }
   ]
