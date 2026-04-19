@@ -858,6 +858,68 @@ footer {
     cursor: pointer;
 }
 
+:root[data-perf="mid"] .marquee-track {
+    animation-duration: 42s;
+}
+
+:root[data-perf="mid"] .marquee-track.reverse {
+    animation-duration: 48s;
+}
+
+:root[data-perf="mid"] .sound-bg-glow {
+    animation-duration: 8.5s;
+    opacity: 0.82;
+}
+
+:root[data-perf="mid"] .viz-bar {
+    opacity: 0.62;
+}
+
+:root[data-perf="mid"] #travelling-logo {
+    filter: drop-shadow(0 4px 10px rgba(48, 56, 70, 0.22)) drop-shadow(0 0 8px rgba(240, 246, 255, 0.12));
+}
+
+:root[data-perf="low"] #travelling-logo {
+    filter: none;
+    will-change: auto;
+}
+
+:root[data-perf="low"] .hero-scroll-hint,
+:root[data-perf="low"] .scroll-line,
+:root[data-perf="low"] .marquee-track,
+:root[data-perf="low"] .sound-bg-glow,
+:root[data-perf="low"] .viz-bar {
+    animation: none !important;
+}
+
+:root[data-perf="low"] .feat-num,
+:root[data-perf="low"] .feat-name,
+:root[data-perf="low"] .feat-desc,
+:root[data-perf="low"] .platform-list li,
+:root[data-perf="low"] .coming-soon,
+:root[data-perf="low"] .footer-col ul li a {
+    transition: none !important;
+}
+
+:root[data-perf="low"] .manifesto-headline .line,
+:root[data-perf="low"] .manifesto-body,
+:root[data-perf="low"] .feature-line,
+:root[data-perf="low"] .sound-headline .word,
+:root[data-perf="low"] .sound-stat,
+:root[data-perf="low"] .strip-item,
+:root[data-perf="low"] .quote-text,
+:root[data-perf="low"] .quote-source,
+:root[data-perf="low"] .platform-headline,
+:root[data-perf="low"] .platform-sub,
+:root[data-perf="low"] .platform-list {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+:root[data-perf="low"] .hero-scroll-hint {
+    opacity: 0.24;
+}
+
 @media (max-width: 900px) {
     .manifesto {
         padding: 100px 8vw;

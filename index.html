@@ -22,6 +22,36 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
+  <script>
+    (function () {
+      var tierKey = "sonexa.perfTier.v1";
+      var overrideKey = "sonexa.perfOverride.v1";
+      var allowed = { low: 1, mid: 1, high: 1 };
+
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var queryPerf = params.get("perf");
+        if (queryPerf === "auto") {
+          localStorage.removeItem(overrideKey);
+        } else if (allowed[queryPerf]) {
+          localStorage.setItem(overrideKey, queryPerf);
+        }
+
+        var override = localStorage.getItem(overrideKey);
+        var tier = allowed[override] ? override : localStorage.getItem(tierKey);
+
+        if (!allowed[tier] && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          tier = "low";
+        }
+
+        if (allowed[tier]) {
+          document.documentElement.setAttribute("data-perf", tier);
+        }
+      } catch (err) {
+      }
+    })();
+  </script>
+
   <link
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Space+Grotesk:wght@300;400;500&display=swap"
     rel="stylesheet">
